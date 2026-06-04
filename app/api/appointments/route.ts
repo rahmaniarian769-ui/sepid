@@ -1,29 +1,28 @@
 import { NextResponse } from 'next/server';
 
+// ذخیره موقت در حافظه (فعلاً بدون دیتابیس)
 let appointments: any[] = [];
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+    console.log("📥 دریافت نوبت:", body);
     const newAppointment = {
       _id: Date.now().toString(),
       ...body,
       createdAt: new Date().toISOString(),
-      status: 'pending' // possible: pending, confirmed, cancelled, completed, contacted
+      status: 'pending'
     };
     appointments.unshift(newAppointment);
-    return NextResponse.json({ success: true, data: newAppointment });
+    return NextResponse.json({ success: true, message: 'نوبت ثبت شد', data: newAppointment });
   } catch (error) {
-    return NextResponse.json({ success: false }, { status: 500 });
+    console.error("❌ خطا:", error);
+    return NextResponse.json({ success: false, message: 'خطا در سرور' }, { status: 500 });
   }
 }
 
 export async function GET() {
-  // مرتب‌سازی نزولی بر اساس تاریخ (جدیدترین اول)
-  const sorted = [...appointments].sort((a,b) => 
-    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
-  return NextResponse.json(sorted);
+  return NextResponse.json(appointments);
 }
 
 export async function PUT(request: Request) {

@@ -7,7 +7,7 @@ const AppointmentSchema = new mongoose.Schema({
   visitType: { type: String, enum: ['online', 'offline'], required: true },
   clinic: { type: String },
   createdAt: { type: Date, default: Date.now },
-  status: { type: String, enum: ['pending', 'confirmed', 'cancelled', 'completed'], default: 'pending' }
+  status: { type: String, enum: ['pending', 'confirmed', 'cancelled', 'completed', 'contacted'], default: 'pending' }
 });
 
 export default mongoose.models.Appointment || mongoose.model('Appointment', AppointmentSchema);
