@@ -117,24 +117,33 @@ export default function Home() {
     setLoading(false);
   };
 
+  // ✅ تمام transition‌ها با as const برای رفع خطای تایپ
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.15, delayChildren: 0.2, ease: "easeOut" } }
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+        delayChildren: 0.2,
+        ease: [0.42, 0, 0.58, 1] as const
+      }
+    }
   };
+
   const itemVariants = {
     hidden: { y: 50, opacity: 0, scale: 0.96 },
-    visible: { y: 0, opacity: 1, scale: 1, transition: { type: "spring", stiffness: 90, damping: 14, mass: 0.9 } }
-  };
-  const cardHover = { scale: 1.04, y: -10, transition: { type: "spring", stiffness: 380, damping: 14 } };
-  
-  // ✅ اصلاح floatAnimation با ease معتبر برای Framer Motion
-  const floatAnimation = {
-    y: [0, -12, 0],
-    transition: {
-      repeat: Infinity,
-      duration: 3,
-      ease: [0.42, 0, 0.58, 1] // cubic-bezier معادل ease-in-out
+    visible: {
+      y: 0,
+      opacity: 1,
+      scale: 1,
+      transition: { type: "spring" as const, stiffness: 90, damping: 14, mass: 0.9 }
     }
+  };
+
+  const cardHover = {
+    scale: 1.04,
+    y: -10,
+    transition: { type: "spring" as const, stiffness: 380, damping: 14 }
   };
 
   return (
@@ -152,7 +161,7 @@ export default function Home() {
       <motion.nav 
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, type: "spring", stiffness: 80 }}
+        transition={{ duration: 0.8, type: "spring" as const, stiffness: 80 }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           scrolled ? "bg-black/80 backdrop-blur-2xl shadow-2xl border-b border-white/20" : "bg-black/40 backdrop-blur-md border-b border-white/10"
         }`}
@@ -171,9 +180,9 @@ export default function Home() {
       {/* HERO SECTION */}
       <section id="home" className="min-h-screen flex items-center pt-24 relative z-10">
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
-          <motion.div initial={{ opacity: 0, x: -120 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 1, type: "spring", stiffness: 60 }}>
-            <motion.div initial={{ scale: 0, rotate: -10 }} animate={{ scale: 1, rotate: 0 }} transition={{ delay: 0.2, type: "spring", stiffness: 220 }} className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-400/25 to-orange-400/25 backdrop-blur-md border border-yellow-400/40 px-5 py-2 rounded-full text-sm mb-6"><Sparkles className="w-4 h-4 text-yellow-400 animate-pulse" /><span className="text-yellow-400">روانشناس کودک و نوجوان</span></motion.div>
-            <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, type: "spring", stiffness: 80 }} className="text-6xl md:text-8xl font-bold leading-tight"><span className="bg-gradient-to-r from-white via-blue-400 to-purple-400 bg-clip-text text-transparent">دکتر سپیده</span><br /><span className="text-white">رحمانی</span></motion.h1>
+          <motion.div initial={{ opacity: 0, x: -120 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 1, type: "spring" as const, stiffness: 60 }}>
+            <motion.div initial={{ scale: 0, rotate: -10 }} animate={{ scale: 1, rotate: 0 }} transition={{ delay: 0.2, type: "spring" as const, stiffness: 220 }} className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-400/25 to-orange-400/25 backdrop-blur-md border border-yellow-400/40 px-5 py-2 rounded-full text-sm mb-6"><Sparkles className="w-4 h-4 text-yellow-400 animate-pulse" /><span className="text-yellow-400">روانشناس کودک و نوجوان</span></motion.div>
+            <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, type: "spring" as const, stiffness: 80 }} className="text-6xl md:text-8xl font-bold leading-tight"><span className="bg-gradient-to-r from-white via-blue-400 to-purple-400 bg-clip-text text-transparent">دکتر سپیده</span><br /><span className="text-white">رحمانی</span></motion.h1>
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 0.8 }} className="text-gray-300 mt-6 leading-8 text-lg max-w-lg">درمان تخصصی اضطراب، مشکلات رفتاری، رشد فردی و بهبود روابط خانواده.</motion.p>
             <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }} className="flex gap-5 mt-8">
               <motion.button whileHover={{ scale: 1.05, boxShadow: "0 0 35px rgba(59,130,246,0.7)" }} whileTap={{ scale: 0.95 }} onClick={() => scrollTo("reservation")} className="bg-gradient-to-r from-blue-500 to-purple-500 px-9 py-3 rounded-full font-semibold shadow-xl">رزرو نوبت</motion.button>
@@ -185,15 +194,18 @@ export default function Home() {
               ))}
             </motion.div>
           </motion.div>
-          <motion.div initial={{ opacity: 0, scale: 0.4, rotateY: 90 }} animate={{ opacity: 1, scale: 1, rotateY: 0 }} transition={{ duration: 1.3, type: "spring", stiffness: 70 }} className="relative">
+          <motion.div initial={{ opacity: 0, scale: 0.4, rotateY: 90 }} animate={{ opacity: 1, scale: 1, rotateY: 0 }} transition={{ duration: 1.3, type: "spring" as const, stiffness: 70 }} className="relative">
             <div className="absolute -inset-6 bg-gradient-to-r from-blue-500/40 via-purple-500/40 to-pink-500/40 rounded-3xl blur-2xl animate-pulse"></div>
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/30 to-purple-500/30 rounded-3xl blur-3xl"></div>
-            <motion.div animate={floatAnimation}>
+            <motion.div
+              animate={{ y: [0, -12, 0] }}
+              transition={{ repeat: Infinity, duration: 3, ease: [0.42, 0, 0.58, 1] as const }}
+            >
               <Image src="/doctor-new.jpg" alt="doctor" width={500} height={600} className="rounded-3xl relative z-10 shadow-2xl" />
             </motion.div>
           </motion.div>
         </div>
-        <motion.div animate={{ y: [0, 16, 0] }} transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }} className="absolute bottom-8 left-1/2 transform -translate-x-1/2 cursor-pointer z-20" onClick={() => scrollTo("services")}><ChevronDown className="w-10 h-10 text-gray-400 hover:text-blue-400 transition-colors" /></motion.div>
+        <motion.div animate={{ y: [0, 16, 0] }} transition={{ repeat: Infinity, duration: 2.5, ease: [0.42, 0, 0.58, 1] as const }} className="absolute bottom-8 left-1/2 transform -translate-x-1/2 cursor-pointer z-20" onClick={() => scrollTo("services")}><ChevronDown className="w-10 h-10 text-gray-400 hover:text-blue-400 transition-colors" /></motion.div>
       </section>
 
       {/* SERVICES */}
