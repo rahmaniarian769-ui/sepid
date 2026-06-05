@@ -1,36 +1,36 @@
 import { NextResponse } from 'next/server';
-
-let appointments: any[] = [];
+import { dbConnect } from '@/lib/dbConnect';
+import Appointment from '@/models/Appointment';
 
 export async function POST(request: Request) {
   try {
+    await dbConnect();
     const body = await request.json();
-    const newAppointment = {
-      _id: Date.now().toString(),
-      ...body,
-      createdAt: new Date().toISOString(),
-      status: 'pending'
-    };
-    appointments.unshift(newAppointment);
+    const newAppointment = await Appointment.create(body);
     return NextResponse.json({ success: true, data: newAppointment });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ success: false, message: 'Server error' }, { status: 500 });
+    return NextResponse.json({ success: false, message: 'خطا در ثبت نوبت' }, { status: 500 });
   }
 }
 
 export async function GET() {
-  return NextResponse.json(appointments);
+  try {
+    await dbConnect();
+    const appointments = await Appointment.find().sort({ createdAt: -1 });
+    return NextResponse.json(appointments);
+  } catch (error) {
+    return NextResponse.json([]);
+  }
 }
 
 export async function PUT(request: Request) {
   try {
     const { id, status } = await request.json();
-    appointments = appointments.map(apt =>
-      apt._id === id ? { ...apt, status } : apt
-    );
+    await dbConnect();
+    await Appointment.findByIdAndUpdate(id, { status });
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (error) {
     return NextResponse.json({ success: false }, { status: 500 });
   }
 }
