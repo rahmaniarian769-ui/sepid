@@ -1,12 +1,10 @@
 import { NextResponse } from 'next/server';
 
-// ذخیره موقت در حافظه (بدون دیتابیس)
 let appointments: any[] = [];
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    console.log("📥 دریافت نوبت جدید:", body);
     const newAppointment = {
       _id: Date.now().toString(),
       ...body,
@@ -14,10 +12,10 @@ export async function POST(request: Request) {
       status: 'pending'
     };
     appointments.unshift(newAppointment);
-    return NextResponse.json({ success: true, message: 'نوبت ثبت شد', data: newAppointment });
+    return NextResponse.json({ success: true, data: newAppointment });
   } catch (error) {
-    console.error("❌ خطا:", error);
-    return NextResponse.json({ success: false, message: 'خطا در سرور' }, { status: 500 });
+    console.error(error);
+    return NextResponse.json({ success: false, message: 'Server error' }, { status: 500 });
   }
 }
 
