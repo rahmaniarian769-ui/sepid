@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@prisma/client": "^7.8.0",
     "framer-motion": "^12.40.0",
     "lucide-react": "^1.17.0",
     "mongoose": "^9.6.3",
@@ -26,6 +27,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
     "postcss": "^8.5.15",
+    "prisma": "^7.8.0",
     "tailwindcss": "^4.3.0",
     "typescript": "^5"
   }
