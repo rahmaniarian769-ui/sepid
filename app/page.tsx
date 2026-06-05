@@ -126,7 +126,16 @@ export default function Home() {
     visible: { y: 0, opacity: 1, scale: 1, transition: { type: "spring", stiffness: 90, damping: 14, mass: 0.9 } }
   };
   const cardHover = { scale: 1.04, y: -10, transition: { type: "spring", stiffness: 380, damping: 14 } };
-  const floatAnimation = { y: [0, -12, 0], transition: { repeat: Infinity, duration: 3, ease: "easeInOut" } };
+  
+  // ✅ اصلاح floatAnimation با ease معتبر برای Framer Motion
+  const floatAnimation = {
+    y: [0, -12, 0],
+    transition: {
+      repeat: Infinity,
+      duration: 3,
+      ease: [0.42, 0, 0.58, 1] // cubic-bezier معادل ease-in-out
+    }
+  };
 
   return (
     <main className="min-h-screen bg-black text-white overflow-x-hidden">
