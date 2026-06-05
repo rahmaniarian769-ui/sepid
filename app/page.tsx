@@ -82,6 +82,7 @@ export default function Home() {
     { name: "رضا ک.", text: "حرفه‌ای و با دانش. تشکر فراوان.", rating: 5 }
   ];
 
+  // ✅ تابع ثبت نوبت اصلاح شده (با خطایابی کامل)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: Record<string, string> = {};
@@ -105,27 +106,29 @@ export default function Home() {
           clinic: visitType === 'offline' ? clinic : null,
         }),
       });
+      const data = await res.json();
       if (res.ok) {
         setSuccess(true);
         setFormData({ name: "", lastName: "", phone: "" });
         setErrors({});
         setTimeout(() => setSuccess(false), 5000);
       } else {
-        alert("خطا در ثبت نوبت");
+        alert(data.message || "خطا در ثبت نوبت");
       }
     } catch (error) {
+      console.error(error);
       alert("خطا در ارتباط با سرور");
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ انیمیشن‌های ساده و شیک (کنترل‌شده)
+  // انیمیشن‌های ساده و شیک
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.08, delayChildren: 0.1, duration: 0.4 }
+      transition: { staggerChildren: 0.08, delayChildren: 0.1, duration: 0.4, ease: "easeOut" as const }
     }
   };
 
@@ -134,24 +137,24 @@ export default function Home() {
     visible: {
       y: 0,
       opacity: 1,
-      transition: { duration: 0.4, ease: "easeOut" }
+      transition: { duration: 0.4, ease: "easeOut" as const }
     }
   };
 
   const cardHover = {
     scale: 1.02,
-    transition: { duration: 0.2, ease: "easeOut" }
+    transition: { duration: 0.2, ease: "easeOut" as const }
   };
 
   return (
     <main className="min-h-screen bg-black text-white overflow-x-hidden">
-      {/* پس‌زمینه ثابت (بدون حرکت زیاد) */}
+      {/* پس‌زمینه ثابت */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute top-0 -left-4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 -right-4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl"></div>
       </div>
 
-      {/* Navbar (بدون انیمیشن ورودی سنگین) */}
+      {/* Navbar */}
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled ? "bg-black/80 backdrop-blur-xl shadow-lg border-b border-white/10" : "bg-black/40 backdrop-blur-sm border-b border-white/5"
       }`}>
@@ -307,18 +310,51 @@ export default function Home() {
             <h2 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-white to-blue-400 bg-clip-text text-transparent">وقت مشاوره بگیرید</h2>
           </div>
           <form onSubmit={handleSubmit} className="space-y-5 bg-white/5 p-6 rounded-2xl backdrop-blur-sm border border-white/10">
-            <div><input className={`w-full p-3 rounded-xl bg-black/40 border ${errors.name ? 'border-red-500' : 'border-white/10'} focus:border-blue-500 outline-none text-white`} placeholder="نام" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} />{errors.name && <p className="text-red-400 text-sm mt-1">{errors.name}</p>}</div>
-            <div><input className={`w-full p-3 rounded-xl bg-black/40 border ${errors.lastName ? 'border-red-500' : 'border-white/10'} focus:border-blue-500 outline-none text-white`} placeholder="نام خانوادگی" value={formData.lastName} onChange={(e) => setFormData({...formData, lastName: e.target.value})} />{errors.lastName && <p className="text-red-400 text-sm mt-1">{errors.lastName}</p>}</div>
-            <div><input className={`w-full p-3 rounded-xl bg-black/40 border ${errors.phone ? 'border-red-500' : 'border-white/10'} focus:border-blue-500 outline-none text-white`} placeholder="شماره موبایل" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} />{errors.phone && <p className="text-red-400 text-sm mt-1">{errors.phone}</p>}</div>
-            <select className="w-full p-3 rounded-xl bg-black/40 border border-white/10 focus:border-blue-500 outline-none text-white" value={visitType} onChange={(e) => setVisitType(e.target.value as "online" | "offline")}><option value="offline">حضوری</option><option value="online">آنلاین (مشاوره تلفنی)</option></select>
-            {visitType === "offline" && (<select className="w-full p-3 rounded-xl bg-black/40 border border-white/10 focus:border-blue-500 outline-none text-white" value={clinic} onChange={(e) => setClinic(e.target.value)}><option>رهگشا - تاکستان</option><option>نسیم - قزوین</option><option>راستین - قزوین</option></select>)}
-            <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-black py-3 rounded-xl font-bold shadow-lg disabled:opacity-50">{loading ? "در حال ثبت..." : "ثبت نوبت"}</button>
-            <AnimatePresence>{success && (<motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="bg-green-500/20 text-green-400 p-3 rounded-xl text-center text-sm">✅ نوبت شما با موفقیت ثبت شد. به زودی با شما تماس می‌گیریم.</motion.div>)}</AnimatePresence>
+            <div>
+              <input className={`w-full p-3 rounded-xl bg-black/40 border ${errors.name ? 'border-red-500' : 'border-white/10'} focus:border-blue-500 outline-none text-white placeholder-gray-400`} placeholder="نام" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} />
+              {errors.name && <p className="text-red-400 text-sm mt-1">{errors.name}</p>}
+            </div>
+            <div>
+              <input className={`w-full p-3 rounded-xl bg-black/40 border ${errors.lastName ? 'border-red-500' : 'border-white/10'} focus:border-blue-500 outline-none text-white placeholder-gray-400`} placeholder="نام خانوادگی" value={formData.lastName} onChange={(e) => setFormData({...formData, lastName: e.target.value})} />
+              {errors.lastName && <p className="text-red-400 text-sm mt-1">{errors.lastName}</p>}
+            </div>
+            <div>
+              <input className={`w-full p-3 rounded-xl bg-black/40 border ${errors.phone ? 'border-red-500' : 'border-white/10'} focus:border-blue-500 outline-none text-white placeholder-gray-400`} placeholder="شماره موبایل" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} />
+              {errors.phone && <p className="text-red-400 text-sm mt-1">{errors.phone}</p>}
+            </div>
+            <select className="w-full p-3 rounded-xl bg-black/40 border border-white/10 focus:border-blue-500 outline-none text-white" value={visitType} onChange={(e) => setVisitType(e.target.value as "online" | "offline")}>
+              <option value="offline">حضوری</option>
+              <option value="online">آنلاین (مشاوره تلفنی)</option>
+            </select>
+            {visitType === "offline" && (
+              <select className="w-full p-3 rounded-xl bg-black/40 border border-white/10 focus:border-blue-500 outline-none text-white" value={clinic} onChange={(e) => setClinic(e.target.value)}>
+                <option>رهگشا - تاکستان</option>
+                <option>نسیم - قزوین</option>
+                <option>راستین - قزوین</option>
+              </select>
+            )}
+            <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-black py-3 rounded-xl font-bold shadow-lg disabled:opacity-50">
+              {loading ? "در حال ثبت..." : "ثبت نوبت"}
+            </button>
+            <AnimatePresence>
+              {success && (
+                <motion.div
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="bg-green-500/30 backdrop-blur-sm text-green-300 p-3 rounded-xl text-center text-sm border border-green-500/50"
+                >
+                  ✅ نوبت شما با موفقیت ثبت شد. به زودی با شما تماس می‌گیریم.
+                </motion.div>
+              )}
+            </AnimatePresence>
           </form>
         </div>
       </section>
 
-      <footer className="text-center py-6 border-t border-white/10"><p className="text-gray-500 text-sm">© ۲۰۲۴ دکتر سپیده رحمانی | تمامی حقوق محفوظ است</p></footer>
+      <footer className="text-center py-6 border-t border-white/10">
+        <p className="text-gray-500 text-sm">© ۲۰۲۴ دکتر سپیده رحمانی | تمامی حقوق محفوظ است</p>
+      </footer>
     </main>
   );
 }
