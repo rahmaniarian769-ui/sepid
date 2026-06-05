@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, useInView, useAnimation, AnimatePresence } from "framer-motion";
 import { 
   Baby, Users, GraduationCap, Award, Heart, Sparkles, ChevronDown,
-  Star, Shield, Clock, Calendar, Quote, Zap, Infinity, Compass,
+  Star, Shield, Clock, Calendar, Quote, Zap, Compass,
   Phone, BookOpen, FileText, MessageCircle, CheckCircle, Briefcase
 } from "lucide-react";
 
@@ -130,6 +130,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-black text-white overflow-x-hidden">
+      {/* ANIMATED BACKGROUND */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute top-0 -left-4 w-96 h-96 bg-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-0 -right-4 w-96 h-96 bg-blue-500/30 rounded-full blur-3xl animate-pulse delay-1000"></div>
@@ -138,6 +139,7 @@ export default function Home() {
         <div className="absolute top-2/3 left-10 w-64 h-64 bg-indigo-500/15 rounded-full blur-3xl animate-pulse delay-1500"></div>
       </div>
 
+      {/* NAVBAR */}
       <motion.nav 
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -157,6 +159,7 @@ export default function Home() {
         </div>
       </motion.nav>
 
+      {/* HERO SECTION */}
       <section id="home" className="min-h-screen flex items-center pt-24 relative z-10">
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
           <motion.div initial={{ opacity: 0, x: -120 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 1, type: "spring", stiffness: 60 }}>
@@ -177,7 +180,6 @@ export default function Home() {
             <div className="absolute -inset-6 bg-gradient-to-r from-blue-500/40 via-purple-500/40 to-pink-500/40 rounded-3xl blur-2xl animate-pulse"></div>
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/30 to-purple-500/30 rounded-3xl blur-3xl"></div>
             <motion.div animate={floatAnimation}>
-              {/* عکس با نام جدید تا کش قدیمی نمایش داده نشود */}
               <Image src="/doctor-new.jpg" alt="doctor" width={500} height={600} className="rounded-3xl relative z-10 shadow-2xl" />
             </motion.div>
           </motion.div>
@@ -185,6 +187,7 @@ export default function Home() {
         <motion.div animate={{ y: [0, 16, 0] }} transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }} className="absolute bottom-8 left-1/2 transform -translate-x-1/2 cursor-pointer z-20" onClick={() => scrollTo("services")}><ChevronDown className="w-10 h-10 text-gray-400 hover:text-blue-400 transition-colors" /></motion.div>
       </section>
 
+      {/* SERVICES */}
       <section ref={refs.services} id="services" className="py-32 px-6 relative z-10">
         <motion.div variants={containerVariants} initial="hidden" animate={controls.services} className="text-center mb-20">
           <motion.div variants={itemVariants} className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-md px-5 py-2 rounded-full mb-5"><Zap className="w-4 h-4 text-yellow-400" /><span className="text-sm">خدمات تخصصی</span></motion.div>
@@ -205,6 +208,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* مشاوره تلفنی */}
       <section ref={refs.phoneConsult} id="phone-consult" className="py-32 px-6 relative bg-gradient-to-b from-black to-gray-900/50 z-10">
         <motion.div variants={containerVariants} initial="hidden" animate={controls.phoneConsult} className="text-center mb-20">
           <motion.div variants={itemVariants} className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-md px-5 py-2 rounded-full mb-5"><Phone className="w-4 h-4 text-yellow-400" /><span className="text-sm">مشاوره تلفنی</span></motion.div>
@@ -217,6 +221,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* سوابق تحصیلی */}
       <section ref={refs.about} id="about" className="py-32 px-6 relative overflow-hidden z-10">
         <div className="absolute inset-0 bg-gradient-to-b from-blue-500/8 via-purple-500/8 to-pink-500/8"></div>
         <motion.div variants={containerVariants} initial="hidden" animate={controls.about} className="max-w-6xl mx-auto relative z-10">
@@ -232,6 +237,7 @@ export default function Home() {
         </motion.div>
       </section>
 
+      {/* نظرات */}
       <section ref={refs.testimonials} id="testimonials" className="py-32 px-6 relative bg-gradient-to-t from-black to-gray-900/40 z-10">
         <motion.div variants={containerVariants} initial="hidden" animate={controls.testimonials} className="text-center mb-16">
           <motion.div variants={itemVariants} className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-md px-5 py-2 rounded-full mb-5"><Star className="w-4 h-4 text-yellow-400" /><span className="text-sm">نظرات مراجعین</span></motion.div>
@@ -244,6 +250,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* فرم رزرو نوبت */}
       <section ref={refs.reservation} id="reservation" className="py-32 px-6 relative z-10">
         <motion.div variants={containerVariants} initial="hidden" animate={controls.reservation} className="max-w-2xl mx-auto">
           <div className="text-center mb-12">
