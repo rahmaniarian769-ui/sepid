@@ -1,49 +1,45 @@
 import { NextResponse } from 'next/server';
-
-// In-memory storage (temporary, but works immediately)
-let appointments: any[] = [];
+import dbConnect from '@/lib/dbConnect';
+import Appointment from '@/models/Appointment';
 
 export async function POST(request: Request) {
   try {
+    await dbConnect();
     const body = await request.json();
-    console.log('Received appointment:', body);
 
-    // Basic validation
     if (!body.name || !body.lastName || !body.phone) {
       return NextResponse.json(
-        { success: false, message: 'Missing required fields' },
+        { success: false, message: 'اطلاعات ناقص است' },
         { status: 400 }
       );
     }
 
-    const newAppointment = {
-      _id: Date.now().toString(),
-      ...body,
-      createdAt: new Date().toISOString(),
-      status: 'pending'
-    };
-    appointments.unshift(newAppointment);
-    
-    return NextResponse.json({ success: true, data: newAppointment });
+    const appointment = await Appointment.create(body);
+    return NextResponse.json({ success: true, data: appointment });
   } catch (error) {
-    console.error('Error in POST:', error);
+    console.error(error);
     return NextResponse.json(
-      { success: false, message: 'Internal server error' },
+      { success: false, message: 'خطای سرور' },
       { status: 500 }
     );
   }
 }
 
 export async function GET() {
-  return NextResponse.json(appointments);
+  try {
+    await dbConnect();
+    const appointments = await Appointment.find().sort({ createdAt: -1 });
+    return NextResponse.json(appointments);
+  } catch (error) {
+    return NextResponse.json([], { status: 500 });
+  }
 }
 
 export async function PUT(request: Request) {
   try {
+    await dbConnect();
     const { id, status } = await request.json();
-    appointments = appointments.map(apt =>
-      apt._id === id ? { ...apt, status } : apt
-    );
+    await Appointment.findByIdAndUpdate(id, { status });
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ success: false }, { status: 500 });
